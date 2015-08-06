@@ -51,7 +51,7 @@ class Bibtexjournalconverter
     journalConversion.each_key do |oldname|
       progressbar.increment
       #STDERR.puts "converting #{oldname}\t to #{journalConversion[oldname]}"
-      bib.unify(:journal, Regexp.new(oldname, 'i'), journalConversion[oldname])
+      bib.unify(:journal, Regexp.new('^'+oldname+'$', 'i'), journalConversion[oldname])
     end
 
     ## removing any extra '.' from journals that were already short
