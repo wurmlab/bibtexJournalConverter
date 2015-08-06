@@ -1,2 +1,3 @@
 The American Naturalist = Am. Nat.
 Insectes Sociaux = Insectes Soc.
+Briefings in Functional Genomics = Brief. Funct. Genomic.
