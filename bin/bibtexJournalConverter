@@ -3,10 +3,11 @@
 require 'bibtexJournalConverter'
 require 'optparse'
 
+APP_DIR = File.expand_path(File.join(File.dirname(__FILE__), '..'))
+
 # Specify command line interface.
 options = {}
-options[:shorten] == false       ## @yeban how can this be merged with the real parsing?
-options[:removeDots] == false
+options[:abbreviation_files] = Dir["#{APP_DIR}/info/*"]
 optspec = OptionParser.new do |opts|
   opts.banner = 'Usage: bibtexJournalConverter [options] references.bib'
 
@@ -28,13 +29,19 @@ optspec = OptionParser.new do |opts|
   #   http://ruby-doc.org/stdlib-2.2.0/libdoc/optparse/rdoc/OptionParser.html
 
   # A yes/no option.
-  opts.on('--version') {|o| options[:version] = o}
-  opts.on('--shorten',  help="default: use long journal titles") {|o| options[:shorten] = o}
-  opts.on('--remove-dots',  help="default: dots stay - only valid when --shorten is used ") {|o| options[:removeDots] = o} 
-## @yeban I tried this opts.on('--shorten',  action="store_true", dest="shorten", default=False, help="default: use long journal titles")
+  opts.on('--version') { |o| options[:version] = o }
+  opts.on('--shorten',  'default: use long journal titles') { |o| options[:shorten] = o }
+  opts.on('--remove-dots', 'default: dots stay - only valid when --shorten is used') { |o| options[:removeDots] = o }
 
   # An option that takes a value.
-  opts.on('--abbreviation-files=journal_abbreviations_lifescience.txt,myotherfile.txt') {|o| options[:abbreviation_files] = o.split(",")}
+  opts.on('--include-abbreviation-files x,y,z',
+          'Comma separated list of abbreviation files. These are appeneded to' \
+          ' the internal database of abbreviations contained in info/.',
+          Array) { |o| options[:abbreviation_files].concat(o) }
+  opts.on('--replace-abbreviation-files x,y,z',
+          'Comma separated list of abbreviation files. These are used instead' \
+          ' of the internal database of abbreviations contained in info/.',
+          Array) { |o| options[:abbreviation_files] = o }
 end
 
 # Print help if no arguments given.
@@ -60,7 +67,7 @@ if files.length != 1  #only 1 bib
   exit
 end
 
-allfiles = (files.push(options[:abbreviation_files])).flatten
+allfiles = files + options[:abbreviation_files]
 allfiles.each do |file|
   f = File.expand_path file
   unless File.file?(f) && !File.zero?(f) && File.readable?(f)
