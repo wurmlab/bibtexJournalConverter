@@ -31,13 +31,17 @@ optspec = OptionParser.new do |opts|
   # A yes/no option.
   opts.on('--version') { |o| options[:version] = o }
   opts.on('--shorten',  'default: use long journal titles') { |o| options[:shorten] = o }
-  opts.on('--remove-dots', 'default: dots stay - only valid when --shorten is used') { |o| options[:removeDots] = o }
 
-  # An option that takes a value.
+  opts.on('--remove-dots',
+          'When shortening, use this option to remove dots from the shortened' \
+          'names. When expanding, use this option if the short names in your'  \
+          ' bib do not have dots.') { |o| options[:remove_dots] = o }
+
   opts.on('--include-abbreviation-files x,y,z',
           'Comma separated list of abbreviation files. These are appeneded to' \
           ' the internal database of abbreviations contained in info/.',
           Array) { |o| options[:abbreviation_files].concat(o) }
+
   opts.on('--replace-abbreviation-files x,y,z',
           'Comma separated list of abbreviation files. These are used instead' \
           ' of the internal database of abbreviations contained in info/.',
